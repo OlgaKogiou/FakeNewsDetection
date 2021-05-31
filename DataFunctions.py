@@ -1,3 +1,4 @@
+# Libraries import
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
@@ -17,6 +18,7 @@ import matplotlib.pyplot as plt
 
 # Function to split dataset to train-test subset
 def split_data(data, labels):
+    # K fold cross validation
     cv = KFold(n_splits=10, random_state=42, shuffle=True)
     for train_index, test_index in cv.split(data):
         return data[train_index], data[test_index], labels[train_index], labels[test_index]
@@ -24,8 +26,10 @@ def split_data(data, labels):
 
 # Function to train Naive Bayes Classifier
 def train_NB(train_data, train_labels):
+    # creation of NB model 
     model = MultinomialNB().fit(train_data, train_labels)
     y_predict_for_train_data = model.predict(train_data)
+    # training accuracy on a % level
     average_accuracy = np.mean(train_labels == y_predict_for_train_data) * 100
     print("The average training accuracy is {}%".format(average_accuracy))
     return model
@@ -33,8 +37,10 @@ def train_NB(train_data, train_labels):
 
 # Function to train Random Forest Classifier
 def train_random_forest(train_data, train_labels, est):
+    # creation of RF model 
     model = RandomForestClassifier(n_estimators=est).fit(train_data, train_labels)
     y_predict_for_train_data = model.predict(train_data)
+    # training accuracy on a % level
     average_accuracy = np.mean(train_labels == y_predict_for_train_data) * 100
     print("The average training accuracy is {}%".format(average_accuracy))
     return model
@@ -42,8 +48,10 @@ def train_random_forest(train_data, train_labels, est):
 
 # Function to train Support Vector Machine
 def train_SVC(train_data, train_labels, k, c):
+    # creation of SVC model 
     model = svm.SVC(C=c, kernel=k).fit(train_data, train_labels)
     y_predict_for_train_data = model.predict(train_data)
+    # training accuracy on a % level
     average_accuracy = np.mean(train_labels == y_predict_for_train_data) * 100
     print("The average training accuracy is {}".format(average_accuracy))
     return model
@@ -51,7 +59,9 @@ def train_SVC(train_data, train_labels, k, c):
 
 # Function to test classifiers using the fixed models
 def test_classifier(clf, validate_data, validate_labels):
+    # prediction checking
     predicted = clf.predict(validate_data)
+    # testing accuracy on a % level
     average_accuracy = np.mean(validate_labels == predicted) * 100
     print("The average testing accuracy is {}".format(average_accuracy))
     return predicted
@@ -66,7 +76,7 @@ def read_datasets():
     # Printing the data
     return fake, true
 
-
+# function to remove punctuation
 def punctuation_removal(text):
     all_list = [char for char in text if char not in string.punctuation]
     clean_str = ''.join(all_list)
@@ -85,12 +95,12 @@ def preprocess(text):
 def data_cleaning(fake, true):
     fake['label'] = '1'
     true['label'] = '0'
-
+    # dataset conactenation
     data = pd.concat([fake, true]).reset_index(drop=True)
-
+    # random order of articles
     data = shuffle(data)
     data = data.reset_index(drop=True)
-
+    # delete "date" column
     data.drop(['date'], axis=1, inplace=True)
     data['text'] = preprocess(data['text'])
     return data
