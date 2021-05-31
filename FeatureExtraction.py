@@ -1,3 +1,4 @@
+# Libraries import
 import spacy
 from collections import Counter
 from nltk import pos_tag
@@ -16,13 +17,14 @@ import numpy as np
 
 # count-word feature extraction
 def get_CountVector3(all_data, train_data, test_data):
+    # Vectorizer
     count_vect = CountVectorizer()
     count_vect = count_vect.fit(all_data)
     x_train_data = count_vect.transform(train_data)
     x_test_data = count_vect.transform(test_data)
     return x_train_data, x_test_data
 
-
+# count-word feature extraction using all dataset
 def get_CountVector1(all_data):
     count_vect = CountVectorizer()
     count_vect = count_vect.fit(all_data)
@@ -37,21 +39,21 @@ def remove_NLTK_stop3(all_data, train_data, test_data):
     all_cleaned = list()
     train_cleaned = list()
     test_cleaned = list()
-
+    # word tokenization in all data
     for article in all_data:
         word_tokens = word_tokenize(article)
         all_cleaned.append(deto.detokenize([w for w in word_tokens if not w in sw]))
-
+    # word tokenization in train data
     for article in train_data:
         word_tokens = word_tokenize(article)
         train_cleaned.append(deto.detokenize([w for w in word_tokens if not w in sw]))
-
+    # word tokenization in test data
     for article in test_data:
         word_tokens = word_tokenize(article)
         test_cleaned.append(deto.detokenize([w for w in word_tokens if not w in sw]))
     return all_cleaned, train_cleaned, test_cleaned
 
-
+# removing Stop-words NLTK
 def remove_NLTK_stop1(all_data):
     sw = stopwords.words('english')
     deto = Detok()
@@ -65,7 +67,7 @@ def remove_NLTK_stop1(all_data):
     return all_cleaned
 
 
-# removing Stop-words SpaCy
+# removing Stop-words SpaCy using all, train, test data
 def remove_spaCy_stop3(all_data, train_data, test_data):
     sw = spacy.lang.en.stop_words.STOP_WORDS
     deto = Detok()
@@ -87,7 +89,7 @@ def remove_spaCy_stop3(all_data, train_data, test_data):
 
     return all_cleaned, train_cleaned, test_cleaned
 
-
+# removing Stop-words SpaCy using all data
 def remove_spaCy_stop1(all_data):
     spacy_nlp = en_core_web_sm.load()
     sw = spacy.lang.en.stop_words.STOP_WORDS
@@ -104,6 +106,7 @@ def remove_spaCy_stop1(all_data):
 # Stop-word Counter NLTK
 def get_CountVector_NLTK_Stop3(all_data, train_data, test_data):
     sw = stopwords.words('english')
+    # Vectorizer
     count_vect = CountVectorizer(stop_words=sw)
     count_vect = count_vect.fit(all_data)
     x_train_data = count_vect.transform(train_data)
@@ -133,7 +136,7 @@ def get_CountVector_Ngram3(all_data, train_data, test_data):
     x_test_data = count_vect.transform(test_data)
     return x_train_data, x_test_data
 
-
+# count-ngram feature extraction using all data
 def get_CountVector_Ngram1(all_data):
     count_vect = CountVectorizer(ngram_range=(2,3))
     count_vect = count_vect.fit(all_data)
@@ -142,13 +145,14 @@ def get_CountVector_Ngram1(all_data):
 
 # TFIDF-word feature extraction
 def get_TFIDF_Word3(all_data, train_data, test_data):
+    # Vectorizer
     tfidf_vect = TfidfVectorizer(analyzer='word', token_pattern=r'\w{1,}', max_features=5000)
     tfidf_vect.fit(all_data)
     x_train_data = tfidf_vect.transform(train_data)
     x_test_data = tfidf_vect.transform(test_data)
     return x_train_data, x_test_data
 
-
+# TFIDF-word feature extraction using all data
 def get_TFIDF_Word1(all_data):
     tfidf_vect = TfidfVectorizer(analyzer='word', token_pattern=r'\w{1,}', max_features=5000)
     tfidf_vect.fit(all_data)
@@ -174,13 +178,14 @@ def get_TFIDF_NGram1(all_data):
 
 # VADER feature extraction
 def get_VADER_score(data_list):
+    # Vectorizer
     analyser = SentimentIntensityAnalyzer()
     ret_list = list()
     for data in data_list:
         ret_list.append(list(analyser.polarity_scores(data).values()))
     return ret_list
 
-
+# normalization of VADER score
 def make_VADER_score_non_neg(article_list):
     ret_list = list()
     for article_vals in article_list:
@@ -188,7 +193,7 @@ def make_VADER_score_non_neg(article_list):
     return ret_list
 
 
-# Part-of-speech NLTK
+# Part-of-speech NLTK using all data
 def get_PoS_NLTK(all_data):
     # Turn all_data into PoS
     all_pos = list()
@@ -215,6 +220,7 @@ def get_PoS_NLTK(all_data):
 # Part-of-speech coreNLP
 def get_PoS_coreNLP(all_data):
     # Turn all_data into PoS
+    # set up of a coreNLP live server
     nlp = StanfordCoreNLP('http://localhost:9000')
     all_pos = list()
     for article in all_data:
@@ -288,7 +294,7 @@ def get_ER_spaCy(all_data):
         all_list.append(Counter([(X.label_) for X in nlpa.ents]))
 
     all_list_counts = list()
-
+    # Count-vectorize the entity tags
     for counter in all_list:
         temp = list()
         for entity in named_entity_list:
@@ -310,7 +316,7 @@ def get_SPECIFIC_spaCy(all_data):
     for article in all_data:
         nlpa = nlp(str(article))
         all_list.append(Counter([(X.label_) for X in nlpa.ents]))
-
+    # Count-Vectorize the specific tags
     for counter in all_list:
         print(counter)
         temp = list()
