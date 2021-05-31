@@ -20,7 +20,7 @@ Confusion matrices of a characteristic can be analysed as an example of the way 
 
 Python's sklearn is used to provide us with the fixed algorithms so do not build them from scratch.
 """
-
+# Library import
 from FeatureExtraction import *
 from DataFunctions import *
 import pickle
@@ -29,11 +29,14 @@ import pickle
 # train-test wrapper function
 def basic_tests(train_data, train_labels, validate_data, validate_labels):
     print("Random Forest Classifier:")
+    # RF model
     clf_1 = train_random_forest(train_data, train_labels, 50)
     test_classifier(clf_1, validate_data, validate_labels)
+    # NB model
     print("Naive Bayes Classifier:")
     clf_2 = train_NB(train_data, train_labels)
     test_classifier(clf_2, validate_data, validate_labels)
+    # SVM models
     print("Support Vector machine:")
     clf_3 = train_SVC(train_data, train_labels, 'linear', 1.0)
     test_classifier(clf_3, validate_data, validate_labels)
